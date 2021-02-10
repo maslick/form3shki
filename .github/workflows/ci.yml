@@ -1,0 +1,15 @@
+name: Build and test
+
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+    branches: [ "*" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and test
+        run: |
+          docker-compose run accountlib
