@@ -1,7 +1,7 @@
 FROM golang:alpine
 
 WORKDIR /src
-COPY src ./
+COPY . ./
 
 ENV CGO_ENABLED 0
 ENV GOOS linux
