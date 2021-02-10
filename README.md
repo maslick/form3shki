@@ -1,6 +1,7 @@
 # =form3shki=
 Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 
+![Build](https://github.com/maslick/form3shki/workflows/Build/badge.svg)
 
 ## :rocket: Features
 * CI/CD (Github Actions)
