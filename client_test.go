@@ -52,7 +52,7 @@ func TestCreateAccount(t *testing.T) {
 
 func TestFetchAccount(t *testing.T) {
 	acc := testAccount()
-	_, err := client.Create(*acc)
+	_, _ = client.Create(*acc)
 
 	result, err := client.Fetch(acc.ID)
 	assert.Nil(t, err)
@@ -129,13 +129,13 @@ func TestListAccountsWithPagination(t *testing.T) {
 
 func TestDeleteAccount(t *testing.T) {
 	acc := testAccount()
-	_, err := client.Create(*acc)
+	_, _ = client.Create(*acc)
 
-	err = client.Delete(acc.ID, 0)
+	err := client.Delete(acc.ID, 0)
 	assert.Nil(t, err)
 
 	acc = testAccount()
-	_, err = client.Create(*acc)
+	_, _ = client.Create(*acc)
 	err = client.Delete(acc.ID, 1)
 	assert.NotNil(t, err)
 	assert.Equal(t, `{"error_message":"invalid version"}`, err.Error())
