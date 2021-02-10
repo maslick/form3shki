@@ -1,4 +1,4 @@
-package main
+package form3shki
 
 type Account struct {
 	Type           string     `json:"type"`

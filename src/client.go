@@ -1,4 +1,4 @@
-package main
+package form3shki
 
 import (
 	"bytes"
@@ -22,6 +22,9 @@ type Form3APIClient struct {
 	BaseUrl string
 }
 
+// Create a new Form3 account client.
+// The default Form3 API URL is http://localhost:8080.
+// You can override it by setting API_URL environment variable or use Form3APIClient constructor directly.
 func New() IForm3ApiClient {
 	url := getEnv("API_URL", "http://localhost:8080")
 	log.Println("API_URL:", url)
