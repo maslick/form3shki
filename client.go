@@ -10,19 +10,22 @@ import (
 	"os"
 )
 
+// Client is a Form3API client.
+// Form3API client enables you to do all Form3 account CRUD operations.
 type Client interface {
 	Create(account Account) (Account, error)
-	Fetch(accountId string) (Account, error)
-	List(page int, limit int) ([]Account, error)
-	Delete(accountId string, version int) error
+	Fetch(accountID string) (Account, error)
+	List(page int, size int) ([]Account, error)
+	Delete(accountID string, version int) error
 }
 
+// Form3APIClient is the default implementation of the Client interface.
 type Form3APIClient struct {
-	BaseUrl string
+	BaseURL string
 }
 
 func (c *Form3APIClient) init() error {
-	url := c.BaseUrl + "/v1/health"
+	url := c.BaseURL + "/v1/health"
 	resp, err := http.Get(url)
 	if err != nil {
 		return errors.New("server not found")
@@ -40,31 +43,32 @@ func (c *Form3APIClient) init() error {
 	return nil
 }
 
-// Creates a new Form3 account client.
+// NewClient creates a new Form3 account client.
 // The default Form3 API URL is http://localhost:8080.
 // You can override it by setting API_URL environment variable or use Form3APIClient constructor directly.
 func NewClient() (*Form3APIClient, error) {
 	url := getEnv("API_URL", "http://localhost:8080")
-	client := &Form3APIClient{BaseUrl: url}
+	client := &Form3APIClient{BaseURL: url}
 	err := client.init()
 	return client, err
 }
 
-// Creates a new Form3 account client from configuration Config:
+// NewClientWithConfig creates a new Form3 account client from configuration Config:
 //
 // config := NewConfig()
-// config.BaseUrl("http://hello.world:8080")
+// config.BaseURL("http://hello.world:8080")
 // client, _ := form3shki.NewClientWithConfig(config)
 func NewClientWithConfig(config *Config) (*Form3APIClient, error) {
-	client := &Form3APIClient{BaseUrl: config.url}
+	client := &Form3APIClient{BaseURL: config.url}
 	err := client.init()
 	return client, err
 }
 
+// Create will create a new account.
 func (c *Form3APIClient) Create(account Account) (Account, error) {
-	url := c.BaseUrl + "/v1/organisation/accounts"
+	url := c.BaseURL + "/v1/organisation/accounts"
 	body := new(bytes.Buffer)
-	err := json.NewEncoder(body).Encode(AccountDTO{Account: account})
+	err := json.NewEncoder(body).Encode(accountDTO{Account: account})
 	if err != nil {
 		return Account{}, err
 	}
@@ -73,7 +77,7 @@ func (c *Form3APIClient) Create(account Account) (Account, error) {
 	if err != nil {
 		return Account{}, err
 	}
-	var respObj AccountDTO
+	var respObj accountDTO
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&respObj)
@@ -84,8 +88,9 @@ func (c *Form3APIClient) Create(account Account) (Account, error) {
 	return respObj.Account, nil
 }
 
-func (c *Form3APIClient) Fetch(accountId string) (Account, error) {
-	url := c.BaseUrl + "/v1/organisation/accounts/" + accountId
+// Fetch retrieves account with accountID.
+func (c *Form3APIClient) Fetch(accountID string) (Account, error) {
+	url := c.BaseURL + "/v1/organisation/accounts/" + accountID
 	resp, err := http.Get(url)
 	if err != nil {
 		return Account{}, err
@@ -96,7 +101,7 @@ func (c *Form3APIClient) Fetch(accountId string) (Account, error) {
 		return Account{}, errors.New(string(text))
 	}
 
-	var respObj AccountDTO
+	var respObj accountDTO
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&respObj)
@@ -107,14 +112,18 @@ func (c *Form3APIClient) Fetch(accountId string) (Account, error) {
 	return respObj.Account, nil
 }
 
-func (c *Form3APIClient) List(page int, limit int) ([]Account, error) {
-	url := fmt.Sprintf("%s/v1/organisation/accounts?page[number]=%d&page[size]=%d", c.BaseUrl, page, limit)
+// List retrieves a list of Account's in a paginated way.
+// page == is the page number
+// size == how many items to fetch
+// E.g. client.List(0, 10) - get max. 10 elements from page 0
+func (c *Form3APIClient) List(page int, size int) ([]Account, error) {
+	url := fmt.Sprintf("%s/v1/organisation/accounts?page[number]=%d&page[size]=%d", c.BaseURL, page, size)
 	resp, err := http.Get(url)
 	if err != nil {
 		return []Account{}, err
 	}
 
-	var respObj AccountsDTO
+	var respObj accountsDTO
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&respObj)
@@ -125,8 +134,9 @@ func (c *Form3APIClient) List(page int, limit int) ([]Account, error) {
 	return respObj.Accounts, nil
 }
 
-func (c *Form3APIClient) Delete(accountId string, version int) error {
-	url := fmt.Sprintf(`%s/v1/organisation/accounts/%s?version=%d`, c.BaseUrl, accountId, version)
+// Delete will remove account with the given account id and version number (defaults to 0)
+func (c *Form3APIClient) Delete(accountID string, version int) error {
+	url := fmt.Sprintf(`%s/v1/organisation/accounts/%s?version=%d`, c.BaseURL, accountID, version)
 
 	client := &http.Client{}
 	req, err := http.NewRequest("DELETE", url, nil)

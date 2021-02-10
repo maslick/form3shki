@@ -9,7 +9,7 @@ import (
 func main() {
 	// create configuration
 	config := form3shki.NewConfig()
-	config.SetBaseUrl("http://localhost:8080")
+	config.SetBaseURL("http://localhost:8080")
 
 	// initialize client
 	client, _ := form3shki.NewClientWithConfig(config)
@@ -23,6 +23,6 @@ func main() {
 
 	// print
 	for _, account := range list {
-		fmt.Println(account.Id)
+		fmt.Println(account.ID)
 	}
 }

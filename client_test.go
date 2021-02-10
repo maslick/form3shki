@@ -14,14 +14,14 @@ func TestNewClient(t *testing.T) {
 	assert.Nil(t, err, "client should be able to initialize")
 	list, _ := clt.List(0, 10)
 	for _, account := range list {
-		fmt.Println(account.Id)
+		fmt.Println(account.ID)
 	}
 }
 
 func TestNewClientWithConfig(t *testing.T) {
 	config := NewConfig()
-	config.SetBaseUrl("https://helloworld")
-	assert.Equal(t, "https://helloworld", config.BaseUrl())
+	config.SetBaseURL("https://helloworld")
+	assert.Equal(t, "https://helloworld", config.BaseURL())
 
 	_, err := NewClientWithConfig(config)
 	assert.NotNil(t, err)
@@ -29,7 +29,7 @@ func TestNewClientWithConfig(t *testing.T) {
 	fmt.Println(err.Error())
 
 	config = NewConfig()
-	config.SetBaseUrl("https://google.com/gmail")
+	config.SetBaseURL("https://google.com/gmail")
 	_, err = NewClientWithConfig(config)
 	assert.NotNil(t, err)
 }
@@ -39,24 +39,24 @@ func TestCreateAccount(t *testing.T) {
 	result, err := client.Create(*acc)
 
 	assert.Nil(t, err)
-	assert.Equal(t, acc.Id, result.Id)
-	assert.Equal(t, acc.OrganisationId, result.OrganisationId)
-	assert.Equal(t, acc.Attributes.BankId, result.Attributes.BankId)
-	assert.Equal(t, acc.Attributes.BankIdCode, result.Attributes.BankIdCode)
+	assert.Equal(t, acc.ID, result.ID)
+	assert.Equal(t, acc.OrganisationID, result.OrganisationID)
+	assert.Equal(t, acc.Attributes.BankID, result.Attributes.BankID)
+	assert.Equal(t, acc.Attributes.BankIDCode, result.Attributes.BankIDCode)
 	assert.Equal(t, acc.Attributes.BaseCurrency, result.Attributes.BaseCurrency)
 	assert.Equal(t, acc.Attributes.Bic, result.Attributes.Bic)
 	assert.Equal(t, acc.Attributes.Country, result.Attributes.Country)
 
-	_ = client.Delete(acc.Id, 0)
+	_ = client.Delete(acc.ID, 0)
 }
 
 func TestFetchAccount(t *testing.T) {
 	acc := testAccount()
 	_, err := client.Create(*acc)
 
-	result, err := client.Fetch(acc.Id)
+	result, err := client.Fetch(acc.ID)
 	assert.Nil(t, err)
-	assert.Equal(t, acc.Id, result.Id)
+	assert.Equal(t, acc.ID, result.ID)
 
 	_, err = client.Fetch("bad id")
 	assert.NotNil(t, err)
@@ -66,7 +66,7 @@ func TestFetchAccount(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, `{"error_message":"record 00000000-1111-2222-3333-444444555555 does not exist"}`, err.Error())
 
-	_ = client.Delete(acc.Id, 0)
+	_ = client.Delete(acc.ID, 0)
 }
 
 func TestListAccounts(t *testing.T) {
@@ -80,9 +80,9 @@ func TestListAccounts(t *testing.T) {
 	assert.Equal(t, 3, len(list))
 
 	// Clean
-	_ = client.Delete(acc1.Id, 0)
-	_ = client.Delete(acc2.Id, 0)
-	_ = client.Delete(acc3.Id, 0)
+	_ = client.Delete(acc1.ID, 0)
+	_ = client.Delete(acc2.ID, 0)
+	_ = client.Delete(acc3.ID, 0)
 }
 
 func TestListAccountsWithPagination(t *testing.T) {
@@ -115,42 +115,42 @@ func TestListAccountsWithPagination(t *testing.T) {
 	assert.Equal(t, 0, len(list))
 
 	// Clean
-	_ = client.Delete(acc0.Id, 0)
-	_ = client.Delete(acc1.Id, 0)
-	_ = client.Delete(acc2.Id, 0)
-	_ = client.Delete(acc3.Id, 0)
-	_ = client.Delete(acc4.Id, 0)
-	_ = client.Delete(acc5.Id, 0)
-	_ = client.Delete(acc6.Id, 0)
-	_ = client.Delete(acc7.Id, 0)
-	_ = client.Delete(acc8.Id, 0)
-	_ = client.Delete(acc9.Id, 0)
+	_ = client.Delete(acc0.ID, 0)
+	_ = client.Delete(acc1.ID, 0)
+	_ = client.Delete(acc2.ID, 0)
+	_ = client.Delete(acc3.ID, 0)
+	_ = client.Delete(acc4.ID, 0)
+	_ = client.Delete(acc5.ID, 0)
+	_ = client.Delete(acc6.ID, 0)
+	_ = client.Delete(acc7.ID, 0)
+	_ = client.Delete(acc8.ID, 0)
+	_ = client.Delete(acc9.ID, 0)
 }
 
 func TestDeleteAccount(t *testing.T) {
 	acc := testAccount()
 	_, err := client.Create(*acc)
 
-	err = client.Delete(acc.Id, 0)
+	err = client.Delete(acc.ID, 0)
 	assert.Nil(t, err)
 
 	acc = testAccount()
 	_, err = client.Create(*acc)
-	err = client.Delete(acc.Id, 1)
+	err = client.Delete(acc.ID, 1)
 	assert.NotNil(t, err)
 	assert.Equal(t, `{"error_message":"invalid version"}`, err.Error())
 
-	err = client.Delete(acc.Id, 0)
+	err = client.Delete(acc.ID, 0)
 }
 
 func testAccount() *Account {
 	return &Account{
 		Type:           "accounts",
-		Id:             uuid.New().String(),
-		OrganisationId: uuid.New().String(),
+		ID:             uuid.New().String(),
+		OrganisationID: uuid.New().String(),
 		Attributes: Attributes{
-			BankId:       "123456",
-			BankIdCode:   "GBDSC",
+			BankID:       "123456",
+			BankIDCode:   "GBDSC",
 			BaseCurrency: "EUR",
 			Bic:          "NWBKGB22",
 			Country:      "SI",

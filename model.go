@@ -1,31 +1,33 @@
 package form3shki
 
+// Account represents Form3 account.
 type Account struct {
 	Type           string     `json:"type"`
-	Id             string     `json:"id"`
-	OrganisationId string     `json:"organisation_id"`
+	ID             string     `json:"id"`
+	OrganisationID string     `json:"organisation_id"`
 	Attributes     Attributes `json:"attributes"`
 }
 
+// Attributes represents Account's attributes.
 type Attributes struct {
-	BankId       string `json:"bank_id"`
-	BankIdCode   string `json:"bank_id_code"`
+	BankID       string `json:"bank_id"`
+	BankIDCode   string `json:"bank_id_code"`
 	BaseCurrency string `json:"base_currency"`
 	Bic          string `json:"bic"`
 	Country      string `json:"country"`
 }
 
-type AccountDTO struct {
+type accountDTO struct {
 	Account Account `json:"data"`
-	Links   Links   `json:"links"`
+	Links   links   `json:"links"`
 }
 
-type AccountsDTO struct {
+type accountsDTO struct {
 	Accounts []Account `json:"data"`
-	Links    Links     `json:"links"`
+	Links    links     `json:"links"`
 }
 
-type Links struct {
+type links struct {
 	First string `json:"first"`
 	Last  string `json:"last"`
 	Next  string `json:"next"`
