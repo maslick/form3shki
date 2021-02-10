@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 )
@@ -14,7 +13,7 @@ import (
 type Client interface {
 	Create(account Account) (Account, error)
 	Fetch(accountId string) (Account, error)
-	List() ([]Account, error)
+	List(page int, limit int) ([]Account, error)
 	Delete(accountId string, version int) error
 }
 
@@ -46,7 +45,6 @@ func (c *Form3APIClient) init() error {
 // You can override it by setting API_URL environment variable or use Form3APIClient constructor directly.
 func NewClient() (*Form3APIClient, error) {
 	url := getEnv("API_URL", "http://localhost:8080")
-	log.Println("API_URL:", url)
 	client := &Form3APIClient{BaseUrl: url}
 	err := client.init()
 	return client, err
@@ -58,7 +56,6 @@ func NewClient() (*Form3APIClient, error) {
 // config.BaseUrl("http://hello.world:8080")
 // client, _ := form3shki.NewClientWithConfig(config)
 func NewClientWithConfig(config *Config) (*Form3APIClient, error) {
-	log.Println("API_URL:", config.url)
 	client := &Form3APIClient{BaseUrl: config.url}
 	err := client.init()
 	return client, err
@@ -110,8 +107,8 @@ func (c *Form3APIClient) Fetch(accountId string) (Account, error) {
 	return respObj.Account, nil
 }
 
-func (c *Form3APIClient) List() ([]Account, error) {
-	url := c.BaseUrl + "/v1/organisation/accounts"
+func (c *Form3APIClient) List(page int, limit int) ([]Account, error) {
+	url := fmt.Sprintf("%s/v1/organisation/accounts?page[number]=%d&page[size]=%d", c.BaseUrl, page, limit)
 	resp, err := http.Get(url)
 	if err != nil {
 		return []Account{}, err

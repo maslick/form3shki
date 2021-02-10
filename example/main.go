@@ -15,7 +15,7 @@ func main() {
 	client, _ := form3shki.NewClientWithConfig(config)
 
 	// fetch/list all accounts
-	list, err := client.List()
+	list, err := client.List(0, 1)
 
 	if err != nil {
 		log.Fatal(err.Error())
