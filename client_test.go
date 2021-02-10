@@ -7,7 +7,32 @@ import (
 	"testing"
 )
 
-var client = New()
+var client, _ = NewClient()
+
+func TestNewClient(t *testing.T) {
+	clt, err := NewClient()
+	assert.Nil(t, err, "client should be able to initialize")
+	list, _ := clt.List()
+	for _, account := range list {
+		fmt.Println(account.Id)
+	}
+}
+
+func TestNewClientWithConfig(t *testing.T) {
+	config := NewConfig()
+	config.SetBaseUrl("https://helloworld")
+	assert.Equal(t, "https://helloworld", config.BaseUrl())
+
+	_, err := NewClientWithConfig(config)
+	assert.NotNil(t, err, "this should fail")
+	assert.Equal(t, "server not found", err.Error())
+	fmt.Println(err.Error())
+
+	config = NewConfig()
+	config.SetBaseUrl("https://google.com/gmail")
+	_, err = NewClientWithConfig(config)
+	assert.NotNil(t, err, "this should fail")
+}
 
 func TestCreateAccount(t *testing.T) {
 	acc := testAccount()

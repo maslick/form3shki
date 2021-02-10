@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-type IForm3ApiClient interface {
+type Client interface {
 	Create(account Account) (Account, error)
 	Fetch(accountId string) (Account, error)
 	List() ([]Account, error)
@@ -22,13 +22,46 @@ type Form3APIClient struct {
 	BaseUrl string
 }
 
-// Create a new Form3 account client.
+func (c *Form3APIClient) init() error {
+	url := c.BaseUrl + "/v1/health"
+	resp, err := http.Get(url)
+	if err != nil {
+		return errors.New("server not found")
+	}
+
+	if resp.Status != "200 OK" {
+		return errors.New("server not found")
+	}
+
+	text, _ := ioutil.ReadAll(resp.Body)
+	if string(text) != `{"status":"up"}` {
+		return errors.New("server not found")
+	}
+
+	return nil
+}
+
+// Creates a new Form3 account client.
 // The default Form3 API URL is http://localhost:8080.
 // You can override it by setting API_URL environment variable or use Form3APIClient constructor directly.
-func New() IForm3ApiClient {
+func NewClient() (Client, error) {
 	url := getEnv("API_URL", "http://localhost:8080")
 	log.Println("API_URL:", url)
-	return &Form3APIClient{BaseUrl: url}
+	client := &Form3APIClient{BaseUrl: url}
+	err := client.init()
+	return client, err
+}
+
+// Creates a new Form3 account client from configuration Config:
+//
+// config := NewConfig()
+// config.BaseUrl("http://hello.world:8080")
+// client, _ := form3shki.NewClientWithConfig(config)
+func NewClientWithConfig(config *Config) (Client, error) {
+	log.Println("API_URL:", config.url)
+	client := &Form3APIClient{BaseUrl: config.url}
+	err := client.init()
+	return client, err
 }
 
 func (c *Form3APIClient) Create(account Account) (Account, error) {

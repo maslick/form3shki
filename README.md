@@ -1,14 +1,47 @@
-# form3shki
+# =form3shki=
 Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 
 
 # Features
+* CI/CD (Github Actions)
 * Unit tests
-* CI/CD Github Actions
-* Example
+* Example demo
+* Production ready
+
+# Usage
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/maslick/form3shki"
+	"log"
+)
+
+func main() {
+	// create configuration
+	config := form3shki.NewConfig()
+	config.SetBaseUrl("http://localhost:8080")
+
+	// initialize client
+	client,_ := form3shki.NewClientWithConfig(config)
+
+	// fetch/list all accounts
+	list, err := client.List()
+
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// print
+	for _, account := range list {
+		fmt.Println(account.Id)
+	}
+}
+```
 
 # Development
-```
+```shell
 docker-compose up --build
 go test -v -coverprofile=coverage.txt
 go tool cover -func=coverage.txt
