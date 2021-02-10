@@ -2,13 +2,13 @@
 Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 
 
-# Features
+## :rocket: Features
 * CI/CD (Github Actions)
 * Unit tests
 * Example demo
 * Production ready
 
-# Usage
+## :lollipop: Usage
 ```go
 package main
 
@@ -40,10 +40,10 @@ func main() {
 }
 ```
 
-# Development
+## :bulb: Development
 ```shell
-docker-compose up --build
-go test -v -coverprofile=coverage.txt
-go tool cover -func=coverage.txt
-go tool cover -html=coverage.txt
+$ docker-compose up --build
+$ go test -v -coverprofile=coverage.txt
+$ go tool cover -func=coverage.txt
+$ go tool cover -html=coverage.txt
 ```
