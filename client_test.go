@@ -140,7 +140,7 @@ func TestDeleteAccount(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, `{"error_message":"invalid version"}`, err.Error())
 
-	err = client.Delete(acc.ID, 0)
+	_ = client.Delete(acc.ID, 0)
 }
 
 func testAccount() *Account {
