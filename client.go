@@ -44,7 +44,7 @@ func (c *Form3APIClient) init() error {
 // Creates a new Form3 account client.
 // The default Form3 API URL is http://localhost:8080.
 // You can override it by setting API_URL environment variable or use Form3APIClient constructor directly.
-func NewClient() (Client, error) {
+func NewClient() (*Form3APIClient, error) {
 	url := getEnv("API_URL", "http://localhost:8080")
 	log.Println("API_URL:", url)
 	client := &Form3APIClient{BaseUrl: url}
@@ -57,7 +57,7 @@ func NewClient() (Client, error) {
 // config := NewConfig()
 // config.BaseUrl("http://hello.world:8080")
 // client, _ := form3shki.NewClientWithConfig(config)
-func NewClientWithConfig(config *Config) (Client, error) {
+func NewClientWithConfig(config *Config) (*Form3APIClient, error) {
 	log.Println("API_URL:", config.url)
 	client := &Form3APIClient{BaseUrl: config.url}
 	err := client.init()
