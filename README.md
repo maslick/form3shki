@@ -9,7 +9,15 @@ Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 * Production ready
 
 ## :lollipop: Usage
+```shell
+$ mdkir test && cd test
+$ go mod init example.com/test
+$ go get github.com/maslick/form3shki@v0.4.0
+$ touch main.go
+```
+
 ```go
+// main.go
 package main
 
 import (
