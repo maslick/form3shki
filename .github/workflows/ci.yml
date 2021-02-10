@@ -14,6 +14,12 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29
+      - name: Pull images
+        run: docker-compose pull
+      - name: Cache docker layers
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
       - name: Build and test
         run: |
+          docker-compose build accountlib
           docker-compose run accountlib
