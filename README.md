@@ -15,7 +15,7 @@ Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 $ mdkir test && cd test
 $ go mod init example.com/test
 $ go env -w GOPRIVATE=github.com/maslick
-$ go get github.com/maslick/form3shki@v0.4.0
+$ go get github.com/maslick/form3shki@v0.5.0
 $ touch main.go
 ```
 
@@ -32,7 +32,7 @@ import (
 func main() {
 	// create configuration
 	config := form3shki.NewConfig()
-	config.SetBaseUrl("http://localhost:8080")
+	config.SetBaseURL("http://localhost:8080")
 
 	// initialize client
 	client,_ := form3shki.NewClientWithConfig(config)
@@ -46,7 +46,7 @@ func main() {
 
 	// print
 	for _, account := range list {
-		fmt.Println(account.Id)
+		fmt.Println(account.ID)
 	}
 }
 ```
