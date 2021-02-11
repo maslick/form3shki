@@ -1,7 +1,6 @@
 package form3shki
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -11,11 +10,8 @@ var client, _ = NewClient()
 
 func TestNewClient(t *testing.T) {
 	clt, err := NewClient()
-	assert.Nil(t, err, "client should be able to initialize")
-	list, _ := clt.List(0, 10)
-	for _, account := range list {
-		fmt.Println(account.ID)
-	}
+	assert.NotNil(t, clt)
+	assert.Nil(t, err)
 }
 
 func TestNewClientWithConfig(t *testing.T) {
@@ -23,19 +19,20 @@ func TestNewClientWithConfig(t *testing.T) {
 	config.SetBaseURL("https://helloworld")
 	assert.Equal(t, "https://helloworld", config.BaseURL())
 
-	_, err := NewClientWithConfig(config)
+	clt, err := NewClientWithConfig(config)
+	assert.NotNil(t, clt)
 	assert.NotNil(t, err)
 	assert.Equal(t, "server not found", err.Error())
-	fmt.Println(err.Error())
 
 	config = NewConfig()
 	config.SetBaseURL("https://google.com/gmail")
-	_, err = NewClientWithConfig(config)
+	clt, err = NewClientWithConfig(config)
+	assert.NotNil(t, clt)
 	assert.NotNil(t, err)
 }
 
 func TestCreateAccount(t *testing.T) {
-	acc := testAccount()
+	acc := randomAccount()
 	result, err := client.Create(*acc)
 
 	assert.Nil(t, err)
@@ -51,7 +48,7 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestFetchAccount(t *testing.T) {
-	acc := testAccount()
+	acc := randomAccount()
 	_, _ = client.Create(*acc)
 
 	result, err := client.Fetch(acc.ID)
@@ -71,9 +68,9 @@ func TestFetchAccount(t *testing.T) {
 
 func TestListAccounts(t *testing.T) {
 	// Create 3 accounts
-	acc1, _ := client.Create(*testAccount())
-	acc2, _ := client.Create(*testAccount())
-	acc3, _ := client.Create(*testAccount())
+	acc1, _ := client.Create(*randomAccount())
+	acc2, _ := client.Create(*randomAccount())
+	acc3, _ := client.Create(*randomAccount())
 
 	list, err := client.List(0, 3)
 	assert.Nil(t, err)
@@ -87,16 +84,16 @@ func TestListAccounts(t *testing.T) {
 
 func TestListAccountsWithPagination(t *testing.T) {
 	// Create 10 accounts
-	acc0, _ := client.Create(*testAccount())
-	acc1, _ := client.Create(*testAccount())
-	acc2, _ := client.Create(*testAccount())
-	acc3, _ := client.Create(*testAccount())
-	acc4, _ := client.Create(*testAccount())
-	acc5, _ := client.Create(*testAccount())
-	acc6, _ := client.Create(*testAccount())
-	acc7, _ := client.Create(*testAccount())
-	acc8, _ := client.Create(*testAccount())
-	acc9, _ := client.Create(*testAccount())
+	acc0, _ := client.Create(*randomAccount())
+	acc1, _ := client.Create(*randomAccount())
+	acc2, _ := client.Create(*randomAccount())
+	acc3, _ := client.Create(*randomAccount())
+	acc4, _ := client.Create(*randomAccount())
+	acc5, _ := client.Create(*randomAccount())
+	acc6, _ := client.Create(*randomAccount())
+	acc7, _ := client.Create(*randomAccount())
+	acc8, _ := client.Create(*randomAccount())
+	acc9, _ := client.Create(*randomAccount())
 
 	list, err := client.List(0, 3)
 	assert.Nil(t, err)
@@ -128,13 +125,13 @@ func TestListAccountsWithPagination(t *testing.T) {
 }
 
 func TestDeleteAccount(t *testing.T) {
-	acc := testAccount()
+	acc := randomAccount()
 	_, _ = client.Create(*acc)
 
 	err := client.Delete(acc.ID, 0)
 	assert.Nil(t, err)
 
-	acc = testAccount()
+	acc = randomAccount()
 	_, _ = client.Create(*acc)
 	err = client.Delete(acc.ID, 1)
 	assert.NotNil(t, err)
@@ -143,7 +140,7 @@ func TestDeleteAccount(t *testing.T) {
 	_ = client.Delete(acc.ID, 0)
 }
 
-func testAccount() *Account {
+func randomAccount() *Account {
 	return &Account{
 		Type:           "accounts",
 		ID:             uuid.New().String(),
