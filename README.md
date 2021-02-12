@@ -1,7 +1,7 @@
 # =form3shki=
 Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 
-![Build](https://github.com/maslick/form3shki/workflows/Build/badge.svg)
+[![Build](https://github.com/maslick/form3shki/workflows/Build/badge.svg)](https://github.com/maslick/form3shki/actions)
 
 ## :rocket: Features
 * CRUD operations on Accounts resource (Create, Fetch, List, Delete)
