@@ -8,13 +8,15 @@ import (
 
 var client, _ = NewClient()
 
+// Create a new client.
 func TestNewClient(t *testing.T) {
 	clt, err := NewClient()
 	assert.NotNil(t, clt)
 	assert.Nil(t, err)
 }
 
-func TestNewClientWithConfig(t *testing.T) {
+// Create Form3APIClient with invalid Config (server URL).
+func TestNewClientWithInvalidConfig(t *testing.T) {
 	config := NewConfig()
 	config.SetBaseURL("https://helloworld")
 	assert.Equal(t, "https://helloworld", config.BaseURL())
@@ -22,15 +24,26 @@ func TestNewClientWithConfig(t *testing.T) {
 	clt, err := NewClientWithConfig(config)
 	assert.NotNil(t, clt)
 	assert.NotNil(t, err)
-	assert.Equal(t, "server not found", err.Error())
+	assert.Equal(t, "server https://helloworld not found", err.Error())
 
 	config = NewConfig()
-	config.SetBaseURL("https://google.com/gmail")
+	config.SetBaseURL("http://accountapi:8080/v1/organisation/accounts")
 	clt, err = NewClientWithConfig(config)
 	assert.NotNil(t, clt)
 	assert.NotNil(t, err)
+	assert.Equal(t, "server http://accountapi:8080/v1/organisation/accounts not found", err.Error())
 }
 
+// Create Form3APIClient with valid Config (server URL).
+func TestNewClientWithValidConfig(t *testing.T) {
+	config := NewConfig()
+	config.SetBaseURL("http://accountapi:8080")
+	clt, err := NewClientWithConfig(config)
+	assert.NotNil(t, clt)
+	assert.Nil(t, err)
+}
+
+// Create a new Account and assert its fields.
 func TestCreateAccount(t *testing.T) {
 	acc := randomAccount()
 	result, err := client.Create(*acc)
@@ -47,6 +60,7 @@ func TestCreateAccount(t *testing.T) {
 	_ = client.Delete(acc.ID, 0)
 }
 
+// Test Creation of a new Account
 func TestFetchAccount(t *testing.T) {
 	acc := randomAccount()
 	_, _ = client.Create(*acc)
@@ -55,17 +69,32 @@ func TestFetchAccount(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, acc.ID, result.ID)
 
-	_, err = client.Fetch("bad id")
-	assert.NotNil(t, err)
-	assert.Equal(t, `{"error_message":"id is not a valid uuid"}`, err.Error())
-
-	_, err = client.Fetch("00000000-1111-2222-3333-444444555555")
-	assert.NotNil(t, err)
-	assert.Equal(t, `{"error_message":"record 00000000-1111-2222-3333-444444555555 does not exist"}`, err.Error())
-
 	_ = client.Delete(acc.ID, 0)
 }
 
+// Test Creation of a new Account with invalid id format (not UUID)
+func TestFetchInvalidAccountUUID(t *testing.T) {
+	acc := randomAccount()
+	_, _ = client.Create(*acc)
+
+	_, err := client.Fetch("bad id")
+	assert.NotNil(t, err)
+	assert.Equal(t, `{"error_message":"id is not a valid uuid"}`, err.Error())
+	_ = client.Delete(acc.ID, 0)
+}
+
+// Test Creation of a new Account with invalid id (UUID)
+func TestFetchNonExistentAccount(t *testing.T) {
+	acc := randomAccount()
+	_, _ = client.Create(*acc)
+
+	_, err := client.Fetch("00000000-1111-2222-3333-444444555555")
+	assert.NotNil(t, err)
+	assert.Equal(t, `{"error_message":"record 00000000-1111-2222-3333-444444555555 does not exist"}`, err.Error())
+	_ = client.Delete(acc.ID, 0)
+}
+
+// Test List functionality.
 func TestListAccounts(t *testing.T) {
 	// Create 3 accounts
 	acc1, _ := client.Create(*randomAccount())
@@ -82,6 +111,7 @@ func TestListAccounts(t *testing.T) {
 	_ = client.Delete(acc3.ID, 0)
 }
 
+// Test List functionality (with pagination).
 func TestListAccountsWithPagination(t *testing.T) {
 	// Create 10 accounts
 	acc0, _ := client.Create(*randomAccount())
@@ -124,18 +154,32 @@ func TestListAccountsWithPagination(t *testing.T) {
 	_ = client.Delete(acc9.ID, 0)
 }
 
+// Create and delete Account.
 func TestDeleteAccount(t *testing.T) {
 	acc := randomAccount()
 	_, _ = client.Create(*acc)
 
 	err := client.Delete(acc.ID, 0)
 	assert.Nil(t, err)
+}
 
-	acc = randomAccount()
+// Create Account and delete it giving a different version. Delete Account in the end.
+func TestDeleteAccountWithInvalidVersion(t *testing.T) {
+	acc := randomAccount()
 	_, _ = client.Create(*acc)
-	err = client.Delete(acc.ID, 1)
+	err := client.Delete(acc.ID, 1)
 	assert.NotNil(t, err)
 	assert.Equal(t, `{"error_message":"invalid version"}`, err.Error())
+	_ = client.Delete(acc.ID, 0)
+}
+
+// Create Account and delete it giving an invalid Account id.
+func TestDeleteInvalidAccountId(t *testing.T) {
+	acc := randomAccount()
+	_, _ = client.Create(*acc)
+	err := client.Delete("123-456", 0)
+	assert.NotNil(t, err)
+	assert.Equal(t, `{"error_message":"id is not a valid uuid"}`, err.Error())
 
 	_ = client.Delete(acc.ID, 0)
 }

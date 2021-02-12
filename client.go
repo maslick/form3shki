@@ -28,16 +28,16 @@ func (c *Form3APIClient) init() error {
 	url := c.BaseURL + "/v1/health"
 	resp, err := http.Get(url)
 	if err != nil {
-		return errors.New("server not found")
+		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
 	}
 
 	if resp.Status != "200 OK" {
-		return errors.New("server not found")
+		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
 	}
 
 	text, _ := ioutil.ReadAll(resp.Body)
 	if string(text) != `{"status":"up"}` {
-		return errors.New("server not found")
+		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
 	}
 
 	return nil
