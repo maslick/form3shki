@@ -27,17 +27,19 @@ type Form3APIClient struct {
 func (c *Form3APIClient) init() error {
 	url := c.BaseURL + "/v1/health"
 	resp, err := http.Get(url)
+
+	errMsg := fmt.Sprintf("server %s not found", c.BaseURL)
 	if err != nil {
-		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
+		return errors.New(errMsg)
 	}
 
 	if resp.Status != "200 OK" {
-		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
+		return errors.New(errMsg)
 	}
 
 	text, _ := ioutil.ReadAll(resp.Body)
 	if string(text) != `{"status":"up"}` {
-		return errors.New(fmt.Sprintf("server %s not found", c.BaseURL))
+		return errors.New(errMsg)
 	}
 
 	return nil
