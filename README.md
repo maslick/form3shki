@@ -5,10 +5,11 @@ Golang client library for Form3 API (see [specs](ASSIGNMENT.md))
 
 ## :rocket: Features
 * CRUD operations on Accounts resource (Create, Fetch, List, Delete)
+* List operation supports pagination  
 * Integration tests
 * CI pipeline (Github Actions)
 * Golint
-* Example demo
+* Example demo app
 
 ## :lollipop: Usage ([see example](example/main.go))
 ```shell
