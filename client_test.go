@@ -1,3 +1,5 @@
+// +build integration
+
 package form3shki
 
 import (

@@ -6,7 +6,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     command: |
-      sh -c "go test -v -coverprofile=coverage.txt &&
+      sh -c "go test -v -coverprofile=coverage.txt --tags integration &&
              go tool cover -func=coverage.txt"
     depends_on:
       - accountapi
