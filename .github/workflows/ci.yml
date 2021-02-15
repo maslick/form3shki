@@ -19,6 +19,7 @@ jobs:
     name: Integration tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Pull images
         run: docker-compose pull
       - name: Build and test
