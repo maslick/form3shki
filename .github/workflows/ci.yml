@@ -6,8 +6,8 @@ on:
     branches: [ "*" ]
 
 jobs:
-  test:
-    name: Integration tests
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +15,10 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29
+  test:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
       - name: Pull images
         run: docker-compose pull
       - name: Build and test
