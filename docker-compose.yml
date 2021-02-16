@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  accountlib:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: |
+      sh -c "go test -v -coverprofile=coverage.txt --tags integration &&
+             go tool cover -func=coverage.txt"
+    depends_on:
+      - accountapi
+    environment:
+      - API_URL=http://accountapi:8080
   accountapi:
     image: form3tech/interview-accountapi:v1.0.0-4-g63cf8434
     restart: on-failure
@@ -34,6 +45,8 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./scripts/db:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
 
   vault:
     image: vault:0.9.3
