@@ -33,7 +33,7 @@ func (c *Form3APIClient) init() error {
 		return errors.New(errMsg)
 	}
 
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != http.StatusOK {
 		return errors.New(errMsg)
 	}
 
@@ -98,7 +98,7 @@ func (c *Form3APIClient) Fetch(accountID string) (Account, error) {
 		return Account{}, err
 	}
 
-	if resp.Status != "200 OK" {
+	if resp.StatusCode != http.StatusOK {
 		text, _ := ioutil.ReadAll(resp.Body)
 		return Account{}, errors.New(string(text))
 	}
@@ -123,6 +123,10 @@ func (c *Form3APIClient) List(page int, size int) ([]Account, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		return []Account{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, err
 	}
 
 	var respObj accountsDTO
@@ -151,7 +155,7 @@ func (c *Form3APIClient) Delete(accountID string, version int) error {
 		return err
 	}
 
-	if resp.Status != "204 No Content" {
+	if resp.StatusCode != http.StatusNoContent {
 		text, _ := ioutil.ReadAll(resp.Body)
 		return errors.New(string(text))
 	}

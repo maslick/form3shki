@@ -55,7 +55,7 @@ func main() {
 ## :bulb: Development
 ```shell
 $ docker-compose up --build
-$ go test -v -coverprofile=coverage.txt
+$ go test -v -coverprofile=coverage.txt --tags integration
 $ go tool cover -html=coverage.txt
 $ go tool cover -func=coverage.txt
 github.com/maslick/form3shki/client.go:27:	init			90.0%
